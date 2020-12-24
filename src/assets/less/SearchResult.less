@@ -1,0 +1,186 @@
+.searchResult {
+  padding-top: 130px;
+  .van-nav-bar {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+  }
+  .search-box {
+    position: relative;
+  }
+  .search-remind {
+    box-sizing: border-box;
+    position: fixed;
+    left: 26px;
+    top: 100px;
+    z-index: 9999;
+    background-color: #fff;
+    width: 300px;
+    border-radius: 8px;
+    color: black;
+  }
+  .remind-songtitle {
+    padding-left: 30px;
+    background-color: #f7f7f7;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .remind-songitem {
+    padding-left: 30px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .remind-authortitle {
+    padding-left: 30px;
+    background-color: #f7f7f7;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .remind-authoritem {
+    padding-left: 30px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  /deep/ .van-nav-bar__title {
+    display: flex;
+    left: 0;
+    bottom: 0;
+    justify-content: space-around;
+    width: 150px;
+    .active {
+      border-bottom: 4px solid #f5b83f;
+    }
+  }
+  /deep/ #nav-title {
+    padding: 0 10px;
+    height: 30px;
+    line-height: 30px;
+  }
+  .search-title {
+    text-align: center;
+    color: black;
+  }
+  .search-input {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 46px;
+    z-index: 999;
+  }
+  /deep/.van-search__content {
+    padding-right: 0.32rem;
+    background-color: #fff;
+  }
+  .van-field__right-icon {
+    color: #505050;
+  }
+  .result-num {
+    padding-left: 10px;
+  }
+  .result-tab {
+    position: relative;
+    top: -10px;
+  }
+  .van-tabs__wrap {
+    position: fixed;
+    left: 0;
+    top: 100px;
+    width: 100%;
+    z-index: 999;
+  }
+  .songs-item {
+    color: #333;
+    padding: 8px 10px;
+    &:nth-child(even) {
+      background-color: #f7f7f7;
+    }
+    .name {
+      width: 200px;
+    }
+    .img-box {
+      margin-right: 10px;
+    }
+  }
+  .artists-item {
+    box-sizing: border-box;
+    height: 90px;
+    padding: 10px;
+    &:nth-child(even) {
+      background-color: #f7f7f7;
+    }
+  }
+  .item-img {
+    width: 90px;
+    height: 74px;
+    position: relative;
+    top: -2px;
+  }
+  .item-text {
+    width: 250px;
+    padding-top: 10px;
+  }
+  .item-enname {
+    font-size: 14px;
+    color: #d3c7c7;
+  }
+  .CD-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  .CD-item {
+    box-sizing: border-box;
+    flex: 0 0 48%;
+    height: 210px;
+    padding-top: 10px;
+    margin-bottom: 20px;
+  }
+  .CD-img {
+    width: 168px;
+    height: 168px;
+    margin: 0 auto 10px;
+    position: relative;
+    img {
+      border-radius: 8px;
+    }
+  }
+  .playCount {
+    position: absolute;
+    left: 10px;
+    bottom: 8px;
+    z-index: 99;
+    width: 70px;
+    padding-left: 18px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background: url('../image/播放.png') no-repeat 0 center;
+    background-size: 20%;
+  }
+  .CD-text {
+    color: #1c1c1c;
+    font-weight: bold;
+    font-size: 16px;
+    padding-left: 4px;
+  }
+  .autoplay {
+    margin-top: 80px;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    z-index: 999;
+  }
+  .aplayer.aplayer-fixed .aplayer-lrc {
+    z-index: 99999;
+  }
+
+  .aplayer.aplayer-fixed .aplayer-list {
+    margin-bottom: 106px;
+  }
+  /deep/ .aplayer-icon.aplayer-icon-menu {
+    display: block;
+  }
+}

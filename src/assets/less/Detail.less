@@ -1,0 +1,216 @@
+.detail {
+  // margin-top: 40px;
+  background: url('../image/detail-bg.jpg') no-repeat center center;
+  background-size: cover;
+  .van-nav-bar {
+  }
+  /deep/ .van-nav-bar__title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .detail-content {
+    padding: 20px 10px 10px;
+  }
+  .artist-box {
+    margin: 10px auto 12px;
+    font-size: 16px;
+    text-align: center;
+  }
+  .img-box {
+    width: 260px;
+    height: 260px;
+    margin: 20px auto 0;
+    box-shadow: 0 0 14px rgba(12, 12, 11, 0.5);
+    border-radius: 50%;
+    img {
+      border-radius: 50%;
+    }
+  }
+  .detail-autoplay {
+    margin-top: 100px;
+    text-align: center;
+  }
+  .autoplay-voice {
+    position: relative;
+    right: -40px;
+    .slide-box {
+      border-radius: 8px;
+      position: absolute;
+      top: -8px;
+      right: -58px;
+      width: 56px;
+      text-align: center;
+      height: 20px;
+      background-color: #505050;
+      opacity: 0.8;
+      .voice-slide {
+        width: 48px;
+        transform: translateY(9px) translateX(5px);
+      }
+    }
+
+    img {
+      width: 28px;
+      height: 28px;
+    }
+  }
+  .autoplay-back {
+    position: relative;
+    left: -20px;
+  }
+  .autoplay-next {
+    position: relative;
+    right: -20px;
+  }
+  .slider {
+    margin: 30px auto 10px;
+    width: 300px;
+  }
+  .autoplay-time {
+    float: right;
+    margin-top: 6px;
+    margin-right: 24px;
+  }
+  .download {
+    display: flex;
+    margin-top: 70px;
+    justify-content: space-around;
+    padding-bottom: 20px;
+    img {
+      width: 32px;
+      height: 32px;
+    }
+  }
+  .CD {
+    margin-top: 20px;
+  }
+  .CD-title {
+    box-sizing: border-box;
+    height: 26px;
+    line-height: 26px;
+    padding-left: 22px;
+    font-size: 16px;
+    font-weight: bold;
+    border-left: 4px solid #f5b83f;
+  }
+  .CD-content {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .CD-item {
+    flex: 0 0 30%;
+    width: 117px;
+  }
+  .CD-img {
+    width: 117px;
+  }
+  .CD-text {
+    padding-left: 4px;
+    padding-top: 10px;
+    box-sizing: border-box;
+  }
+  .CD-name {
+    font-size: 14px;
+    color: black;
+  }
+  .CD-enname {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+  .smilar {
+    margin-top: 20px;
+  }
+  .smilar-title {
+    box-sizing: border-box;
+    height: 26px;
+    line-height: 26px;
+    padding-left: 22px;
+    font-weight: bold;
+    border-left: 4px solid #f5b83f;
+  }
+  .smilar-content {
+    margin-top: 20px;
+  }
+  .smilar-item {
+    height: 46px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+  }
+  .smilar-img {
+    width: 42px;
+    height: 42px;
+    transform: translateY(2px);
+  }
+  .smilar-text {
+    width: 290px;
+  }
+  .smilar-enname {
+    width: 200px;
+    color: black;
+  }
+  .smilar-artists {
+    font-size: 14px;
+  }
+  .smilar-time {
+    transform: translateY(2px);
+  }
+  .comment {
+    margin-top: 20px;
+  }
+  .comment-title {
+    box-sizing: border-box;
+    height: 26px;
+    line-height: 26px;
+    padding-left: 22px;
+    font-size: 16px;
+    font-weight: bold;
+    border-left: 4px solid #f5b83f;
+  }
+  .comment-content {
+    margin-top: 20px;
+    position: relative;
+  }
+  .comment-count {
+    font-size: 14px;
+    position: absolute;
+    right: 8px;
+    top: -2px;
+  }
+  .comment-item {
+    margin-top: 10px;
+    padding-bottom: 10px;
+  }
+  .comment-img {
+    width: 40px;
+    img {
+      transform: translateY(2px);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+    }
+  }
+  .comment-version {
+    width: 290px;
+  }
+  .comment-artists {
+    color: black;
+  }
+
+  .comment-time {
+    font-size: 12px;
+  }
+  .comment-text {
+    font-weight: bold;
+    margin-top: 6px;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}

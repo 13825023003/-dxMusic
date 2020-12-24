@@ -1,0 +1,79 @@
+.list {
+  .list-top {
+    padding-top: 10px;
+    overflow-x: auto;
+    height: 30px;
+    background-color: #fff;
+  }
+  .list-hot {
+    display: flex;
+    // flex-wrap: nowrap;
+  }
+  .hot-item {
+    flex: 0 0 22%;
+    text-align: center;
+    font-size: 14px;
+    color: #1c1c1c;
+    &:last-child {
+      margin-right: 10px;
+    }
+    span {
+      display: inline-block;
+      padding: 0 10px 4px;
+    }
+  }
+  .list-content {
+    .loading-box {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+  }
+  .list-item {
+    box-sizing: border-box;
+    flex: 0 0 40%;
+    height: 210px;
+    padding-top: 10px;
+    margin-bottom: 20px;
+  }
+  .CD-img {
+    width: 168px;
+    height: 168px;
+    margin: 0 auto 10px;
+    position: relative;
+    img {
+      border-radius: 8px;
+    }
+  }
+  .playCount {
+    position: absolute;
+    left: 10px;
+    bottom: 8px;
+    z-index: 99;
+    width: 70px;
+    padding-left: 18px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background: url('../image/播放.png') no-repeat 0 center;
+    background-size: 20%;
+  }
+  .CD-text {
+    color: #1c1c1c;
+    font-weight: bold;
+    font-size: 16px;
+    padding-left: 4px;
+  }
+  .list .autoplay {
+    margin-top: 80px;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 40px;
+    z-index: 999;
+  }
+  .active {
+    color: #f5b83f;
+    border-bottom: 3px solid #f5b83f;
+  }
+}

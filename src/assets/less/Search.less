@@ -1,0 +1,187 @@
+.search {
+  padding-top: 100px;
+  padding-bottom: 40px;
+  .van-nav-bar {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 0;
+  }
+  .search-box {
+    position: relative;
+  }
+  .search-remind {
+    box-sizing: border-box;
+    position: fixed;
+    left: 26px;
+    top: 100px;
+    z-index: 9999;
+    background-color: #fff;
+    width: 300px;
+    border-radius: 8px;
+    color: black;
+  }
+  .remind-songtitle {
+    padding-left: 30px;
+    background-color: #f7f7f7;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .remind-songitem {
+    padding-left: 30px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .remind-authortitle {
+    padding-left: 30px;
+    background-color: #f7f7f7;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .remind-authoritem {
+    padding-left: 30px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  /deep/ .van-nav-bar__title {
+    display: flex;
+    left: 0;
+    bottom: 0;
+    justify-content: space-around;
+    width: 150px;
+    .active {
+      border-bottom: 4px solid #f5b83f;
+    }
+  }
+  /deep/ #nav-title {
+    padding: 0 10px;
+    height: 30px;
+    line-height: 30px;
+  }
+  .search-title {
+    text-align: center;
+    color: black;
+  }
+  .search-input {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 46px;
+    z-index: 999;
+  }
+  /deep/.van-search__content {
+    padding-right: 0.32rem;
+    background-color: #fff;
+  }
+  .van-field__right-icon {
+    color: #505050;
+  }
+  .search-history {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 220px;
+  }
+
+  .history-title {
+    padding-left: 10px;
+    padding-top: 8px;
+    font-weight: bold;
+    color: #1c1c1c;
+    span {
+      font-size: 12px;
+      font-weight: normal;
+      &:last-child {
+        margin-top: 4px;
+        margin-right: 8px;
+        img {
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+  }
+
+  .history-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    .history-text {
+      border-radius: 10px;
+      text-align: center;
+      margin-left: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+      background-color: #f7f7f7;
+      flex: 0 0 30%;
+      padding: 0 8px;
+      margin-top: 8px;
+    }
+  }
+
+  .search-hot {
+    padding-left: 10px;
+    padding-top: 10px;
+  }
+  .hot-title {
+    font-weight: bold;
+    color: #1c1c1c;
+  }
+  .hot-item {
+    margin-top: 10px;
+    height: 50px;
+    padding-bottom: 4px;
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+  .hot-list {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #f5b83f;
+    line-height: 46px;
+    text-align: center;
+  }
+  .hot-text {
+    padding-top: 4px;
+    width: 310px;
+  }
+  .hot-name {
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .hot-logo {
+    margin-left: 4px;
+  }
+  .hot-count {
+    font-size: 12px;
+    position: relative;
+    top: -2px;
+    margin-left: 6px;
+    color: #d3c7c7;
+  }
+  .hot-enname {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #d3c7c7;
+  }
+  /deep/ .autoplay {
+    margin: 0 !important;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    z-index: 999;
+  }
+  .aplayer.aplayer-fixed .aplayer-lrc {
+    z-index: 99999;
+  }
+  /deep/ .aplayer-icon.aplayer-icon-menu {
+    display: block;
+  }
+}
+.aplayer.aplayer-fixed .aplayer-list {
+  margin-bottom: 0px !important;
+}
