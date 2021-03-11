@@ -18,7 +18,7 @@
       :key="index"
     >
       <div class="CD-img fl">
-        <img :src="item" class="auto-img" alt="" />
+        <van-image lazy-load :src="item" class="auto-img" alt="" />
       </div>
       <div class="CD-title fr">
         <div class="CD-name van-multi-ellipsis--l2">
@@ -45,7 +45,8 @@
                 :key="index"
               >
                 <div class="item-img fl">
-                  <img
+                  <van-image
+                    lazy-load
                     :src="item.coverImgUrl"
                     alt="无图片显示"
                     class="auto-img"
@@ -117,7 +118,8 @@
                 :key="index"
               >
                 <div class="item-img fl">
-                  <img
+                  <van-image
+                    lazy-load
                     :src="item.coverImgUrl"
                     alt="无图片显示"
                     class="auto-img"
@@ -313,5 +315,3 @@ export default {
   },
 }
 </script>
-
-<style lang="less" scoped></style>

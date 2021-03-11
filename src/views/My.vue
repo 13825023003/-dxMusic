@@ -12,9 +12,9 @@
         <van-icon name="fire-o" size="26" />
       </template>
     </van-nav-bar>
-    <div class="user-top clearfix">
+    <myTopContent class="clearfix" :playShow="false">
       <div class="user-img fl">
-        <img :src="userImg" class="auto-img" alt="" />
+        <van-image lazy-load :src="userImg" class="auto-img" alt="" />
       </div>
       <div class="user-text fr">
         <div class="user-name">{{ nickname }}</div>
@@ -22,7 +22,7 @@
           关注 : {{ userFollowCount }} 粉丝 : {{ userFollowesCount }}
         </div>
       </div>
-    </div>
+    </myTopContent>
     <!-- 内容层 -->
     <van-cell
       v-for="(item, index) in listData"
@@ -44,6 +44,7 @@
 import '../assets/less/My.less'
 import { formatDuring } from '../assets/js/formatDuring'
 import areaList from '../assets/js/area'
+import myTopContent from '../components/MyTopContent'
 export default {
   name: 'My',
   data() {
@@ -94,6 +95,9 @@ export default {
     this.getuserFollow()
     // 获取用户粉丝列表
     this.getuserFolloweds()
+  },
+  components: {
+    myTopContent,
   },
   methods: {
     // 登录

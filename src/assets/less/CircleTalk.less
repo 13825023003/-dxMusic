@@ -2,7 +2,6 @@
   padding-top: 47px;
   background-color: #f5f5f5;
   padding-bottom: 50px;
-  background: url('../image/detail-bg.jpg') no-repeat center center;
   background-size: cover;
   .van-nav-bar {
     position: fixed;
@@ -18,7 +17,8 @@
     border-radius: 20px;
   }
   /deep/ .img-wraper {
-    height: auto;
+    height: 200px !important;
+
     img {
       border-radius: 8px;
     }
@@ -28,21 +28,48 @@
     font-size: 14px;
     color: #1c1c1c;
   }
-  .info-enname {
+  .container-water-fall {
+    padding: 10px 0;
+    width: 100vw;
+    box-sizing: border-box;
+    background: #fafafa !important;
+  }
+
+  .cell-item {
+    width: 94%;
+    margin-left: 6px;
     margin-bottom: 10px;
-    height: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
     img {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
+      border-radius: 10px 0 0;
+      height: 200px;
     }
   }
-  .info-nickname {
-    margin-left: 4px;
-    position: relative;
-    top: -3px;
-    z-index: 10;
+
+  .item-body {
+    padding: 10px;
+  }
+
+  .info-playCount {
+    position: absolute;
+    top: -100px;
+    right: -20px;
+    z-index: 999;
+    width: 70px;
+    padding-left: 18px;
     font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background: url('../image/播放.png') no-repeat 0 center;
+    background-size: 20%;
+  }
+  .item-avatar {
+    margin-top: 6px;
+    font-size: 14px;
+    color: gray;
   }
   /deep/ .vue-waterfall-easy-container .vue-waterfall-easy .over {
     font-size: 16px !important;

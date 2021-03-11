@@ -13,9 +13,9 @@
       </template>
     </van-nav-bar>
     <!-- 标题栏 -->
-    <div class="CD-head clearfix">
+    <myTopContent class="clearfix" @click="playAll">
       <div class="CD-img fl">
-        <img :src="CD[2]" class="auto-img" alt="" />
+        <van-image lazy-load :src="CD[2]" class="auto-img" alt="" />
         <span class="CD-count">{{ CD[3] }}</span>
       </div>
       <div class="CD-title fr">
@@ -34,7 +34,7 @@
         @click="toggleSub()"
         size="36"
       ></van-icon>
-    </div>
+    </myTopContent>
     <!-- 歌曲栏 -->
     <div class="CD-songlist">
       <div class="song-title">
@@ -87,7 +87,9 @@
 
 <script>
 import '../assets/less/CD.less'
+import myTopContent from '../components/MyTopContent'
 import { formatDuring } from '../assets/js/formatDuring'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'CD',
   data() {
@@ -109,6 +111,9 @@ export default {
       isSub: false,
     }
   },
+  components: {
+    myTopContent,
+  },
   created() {
     for (let i in this.$route.params) {
       this.CD.push(this.$route.params[i])
@@ -116,7 +121,18 @@ export default {
     // 获取歌单详情
     this.getsongList()
   },
+  computed: {
+    ...mapState({
+      audio: (state) => state.playList.playList,
+    }),
+  },
   methods: {
+    ...mapActions('playList', [
+      'unshiftPlayList',
+      'deletePlayList',
+      'pushPlayList',
+      'upLoadPlayList',
+    ]),
     // 获取歌单详情
     getsongList() {
       this.$toast.loading({
@@ -177,11 +193,16 @@ export default {
     },
     // 播放音乐
     play(id, name, pic, artists) {
+      let hasID = this.audio.find((v) => {
+        return v.id == id
+      })
+      console.log(hasID)
+      if (hasID) {
+        this.deletePlayList(id)
+      }
       // 获取歌曲URL
       let url = ''
-      this.changePic(pic)
-      this.changeArtists(artists)
-      this.changeName(name)
+      let musicStr = ''
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -197,9 +218,9 @@ export default {
         .then((result) => {
           if (result.data.code == 200) {
             url = result.data.data[0].url
-            this.changeSrc(url)
+            musicStr = `id=${id};name=${name};artist=${artists};url=${url};cover=${pic};`
             // 获取歌词
-            this.getLyric(id)
+            this.getLyric(id, musicStr, name)
             this.$toast.clear()
           }
         })
@@ -208,7 +229,7 @@ export default {
         })
     },
     // 获取歌词
-    getLyric(id) {
+    getLyric(id, musicStr, name) {
       let lyric = ''
       this.$toast.loading({
         message: '加载中...',
@@ -224,10 +245,11 @@ export default {
       })
         .then((result) => {
           if (result.data.code == 200) {
-            console.log('lyric', result)
             lyric = result.data.lrc.lyric
-            this.changeLyric(lyric)
-            this.$refs.aplayer.play()
+            musicStr += musicStr + 'lrc=' + lyric + ';'
+            let musicObj = formatDuring.parseStrObjByRegExp(musicStr)
+            this.pushPlayList(musicObj)
+            console.log(this.$store.state)
             this.$toast.clear()
           }
         })
@@ -235,21 +257,22 @@ export default {
           this.$toast.clear()
         })
     },
-    // 修改src元素,保存在公共数据state中
-    changeSrc(url) {
-      this.$store.commit('changeSrc', url)
-    },
-    changeLyric(lyric) {
-      this.$store.commit('changeLyric', lyric)
-    },
-    changePic(pic) {
-      this.$store.commit('changePic', pic)
-    },
-    changeArtists(artists) {
-      this.$store.commit('changeArtists', artists)
-    },
-    changeName(name) {
-      this.$store.commit('changeName', name)
+    playAll() {
+      this.$dialog
+        .confirm({
+          title: '提示信息',
+          message: '是否切换当前音乐列表',
+        })
+        .then(() => {
+          console.log(this.allsongList)
+          this.upLoadPlayList()
+          this.allsongList.map((v) => {
+            this.play(v.id, v.name, v.al.picUrl, v.ar[0].name)
+          })
+        })
+        .catch(() => {
+          return
+        })
     },
     goDetail(id, name, time) {
       this.axios({

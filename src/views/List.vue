@@ -40,29 +40,7 @@
         offset="20"
         @load="loadData"
       >
-        <div class="list-item" v-for="(item, index) in hotCD" :key="index">
-          <div class="CD-img">
-            <span class="playCount">{{ item.playCount }}</span>
-            <img
-              :src="item.coverImgUrl"
-              alt="无图片显示"
-              class="auto-img"
-              @click="
-                goCDDetail(
-                  item.id,
-                  item.name,
-                  item.coverImgUrl,
-                  item.playCount,
-                  item.creator.nickname,
-                  item.creator.avatarUrl
-                )
-              "
-            />
-          </div>
-          <div class="CD-text van-multi-ellipsis--l2">
-            {{ item.name }}
-          </div>
-        </div>
+        <MyCD :CD="hotCD"></MyCD>
       </van-list>
     </div>
   </div>
@@ -70,6 +48,7 @@
 
 <script>
 import '../assets/less/List.less'
+import MyCD from '../components/MyCD'
 export default {
   name: 'List',
   data() {
@@ -99,6 +78,9 @@ export default {
     this.gethotCDTag()
     // 获取热门歌单
     this.getHotCD(this.hotCDTag[0], 0)
+  },
+  components: {
+    MyCD,
   },
   methods: {
     // 获取热门歌单标签列表
@@ -134,6 +116,7 @@ export default {
       this.hotCDTagIndex = index
       this.hotCD = this.hotCD.splice(0, -1)
       this.allHotCD = this.allHotCD.splice(0, -1)
+      this.startCount = 0
       this.axios({
         method: 'GET',
         url: '/top/playlist',
@@ -153,9 +136,10 @@ export default {
             this.startCount + this.dataCount
           )
           this.startCount += this.dataCount
-
           // 未加载
           this.loading = false
+          console.log('this.allHotCD', this.allHotCD)
+          console.log('this.hotCD', this.hotCD)
         })
         .catch((err) => {
           this.$toast.clear()
@@ -181,15 +165,6 @@ export default {
     goSearch() {
       this.$router.push({ name: 'Search' })
     },
-    // 跳转到详情界面
-    goCDDetail(id, name, img, playCount, nickname, avatarUrl) {
-      this.$router.push({
-        name: 'CD',
-        params: { id, name, img, playCount, nickname, avatarUrl },
-      })
-    },
   },
 }
 </script>
-
-<style lang="less" scoped></style>

@@ -1,45 +1,25 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+// 引入登录模块
+import user from './modules/user'
+// 引入播放列表模块
+import playList from './modules/playList'
+// 引入外部模块
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
 //状态管理 ==> 公共数据库, 所有组件都可以访问
 export default new Vuex.Store({
-    state: {
-        // 音频src
-        audioSrc: '',
-        // 音频播放时间
-        currentTime: 0,
-        // 歌词
-        lyric: '',
-        // 音频图片
-        pic: '',
-        // 歌手名字
-        artists: '',
-        // 歌曲名
-        audioName: ''
-    },
-    // 修改state方法,用法类似组件的methods
-    mutations: {
-        // 修改audio
-        changeSrc(state, src) {
-            state.audioSrc = src
-        },
-        changeLyric(state, lyric) {
-            state.lyric = lyric
-        },
-        changePic(state, pic) {
-            state.pic = pic
-        },
-        changeArtists(state, artists) {
-            state.artists = artists
-        },
-        changeName(state, name) {
-            state.audioName = name
-        },
-        // 修改currentTime
-        changeCurrentTime(state, time) {
-            state.currentTime = time
-        }
-    }
+  // 开启严格模式
+  strict: true,
+  plugins: [
+    createPersistedState({
+      storage: window.sessionStorage,
+    }),
+  ],
+  modules: {
+    user,
+    playList,
+  },
 })

@@ -10,27 +10,20 @@
         fixed
         autoplay
         :listFolded="false"
-        :audio="{
-          name: audioName,
-          artist: artists,
-          url: audioSrc,
-          cover: pic,
-          lrc: lyric,
-        }"
+        :audio="audio"
       ></a-player>
     </div>
   </div>
 </template>
 
 <script>
-import { APlayer } from '@moefe/vue-aplayer'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'App',
   data() {
     return {
       aplayerShow: true,
-      arr: ['Welcome', 'Login', 'Register', 'Forgot', 'Detail'],
+      arr: ['Welcome', 'Login', 'Register', 'Forget', 'Detail', 'MV'],
       arr2: ['Recommend', 'CircleTalk', 'List', 'My', 'Classify'],
     }
   },
@@ -40,14 +33,10 @@ export default {
     })
   },
   computed: {
-    ...mapState([
-      'audioSrc',
-      'lyric',
-      'pic',
-      'artists',
-      'audioName',
-      'currentTime',
-    ]),
+    ...mapState({
+      audio: (state) => state.playList.playList,
+      currentTime: (state) => state.playList.currentTime,
+    }),
   },
   watch: {
     // 监听路由的跳转
@@ -61,13 +50,17 @@ export default {
       } else {
         this.aplayerShow = true
         setTimeout(() => {
+          console.log(this.$refs.aplayer)
           let aplayerEle = this.$refs.aplayer.$children[0].$el
+          let listEle = this.$refs.aplayer.$children[1].$el
           let lyricEle = this.$refs.aplayer.$children[2].$el
           if (this.arr2.indexOf(e.name) == -1) {
             aplayerEle.style.bottom = 0
+            listEle.style.marginBottom = 65 + 'px'
             lyricEle.style.bottom = 0
           } else {
             aplayerEle.style.bottom = 46 + 'px'
+            listEle.style.marginBottom = 109 + 'px'
             lyricEle.style.bottom = 46 + 'px'
           }
         })
@@ -75,13 +68,11 @@ export default {
     },
   },
   methods: {
+    ...mapActions('playList', ['changeCurrentTime']),
     // 音乐播放中事件
     Playing() {
       const { media } = this.$refs.aplayer
       this.changeCurrentTime(media.currentTime)
-    },
-    changeCurrentTime(time) {
-      this.$store.commit('changeCurrentTime', time)
     },
   },
 }
@@ -96,8 +87,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
-  color: #646566;
+  color: #505050;
 }
+
 .auto-img {
   width: 100%;
   height: 100%;
@@ -121,15 +113,16 @@ body {
   text-overflow: ellipsis;
 }
 .aplayer.aplayer-fixed .aplayer-body {
-  bottom: 46px;
+  bottom: 2.875rem;
+  max-width: 100%;
 }
 .aplayer.aplayer-fixed .aplayer-lrc {
-  bottom: 48px;
+  bottom: 3rem;
   z-index: 99999;
 }
 
 .aplayer .aplayer-fixed .aplayer-list {
-  margin-bottom: 106px;
+  margin-bottom: 6.625rem;
 }
 /deep/ .aplayer-icon.aplayer-icon-menu {
   display: block;

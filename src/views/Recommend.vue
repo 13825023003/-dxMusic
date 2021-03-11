@@ -4,20 +4,24 @@
     <div class="banner">
       <van-swipe :autoplay="2000" loop>
         <van-swipe-item v-for="(item, index) in bannerData" :key="index">
-          <img
+          <van-image
+            lazy-load
             :src="item.pic"
             class="auto-img"
-            @click="goDetail(item.song.id, item.song.name, item.song.dt)"
+            @click="goBannerDetail(item.song)"
           />
         </van-swipe-item>
       </van-swipe>
     </div>
     <!-- 新音乐推荐层 -->
     <div class="musician-recommend">
-      <div class="musician-title clearfix">
-        <div class="title-left fl">最新音乐推荐</div>
-        <div class="title-right fr" @click="goSearch()">更多>>></div>
-      </div>
+      <MyTitle title="最新音乐推荐">
+        <template
+          ><div class="title-right fr" @click="goSearch()">
+            更多>>>
+          </div></template
+        >
+      </MyTitle>
       <div class="newmusic-contant">
         <div
           class="music-box clearfix"
@@ -30,13 +34,22 @@
               play(item.id, item.name, item.picUrl, item.song.artists[0].name)
             "
           >
-            <span><img src="../assets/image/播放.png" alt=""/></span>
-            <img :src="item.picUrl" alt="" class="auto-img " />
+            <span
+              ><van-image lazy-load src="../assets/image/播放.png" alt=""
+            /></span>
+            <van-image :src="item.picUrl" alt="" class="auto-img " lazy-load />
           </div>
           <div class="text fr">
             <div
               class="music-name van-ellipsis"
-              @click="goDetail(item.id, item.name, item.song.duration)"
+              @click="
+                goDetail(
+                  item.id,
+                  item.name,
+                  item.picUrl,
+                  item.song.artists[0].name
+                )
+              "
             >
               {{ item.name }}
             </div>
@@ -64,13 +77,22 @@
             class="top-img fl"
             @click="play(item.id, item.name, item.al.picUrl, item.ar[0].name)"
           >
-            <span><img src="../assets/image/播放.png" alt=""/></span>
-            <img :src="item.al.picUrl" alt="" class="auto-img" />
+            <span
+              ><van-image lazy-load src="../assets/image/播放.png" alt=""
+            /></span>
+            <van-image
+              lazy-load
+              :src="item.al.picUrl"
+              alt=""
+              class="auto-img"
+            />
           </div>
           <div class="top-text fr">
             <div
               class="top-name van-multi-ellipsis--l1"
-              @click="goDetail(item.id, item.name, item.dt)"
+              @click="
+                goDetail(item.id, item.name, item.al.picUrl, item.ar[0].name)
+              "
             >
               0{{ index + 1 }}、{{ item.al.name }}
               <span class="hot">人气值:{{ item.dt }}</span>
@@ -86,31 +108,16 @@
     </div>
     <!-- MV推荐层 -->
     <div class="MV">
-      <div class="MV-title clearfix">
-        <div class="title-left fl">最热MV推荐</div>
+      <MyTitle title="最热MV推荐">
         <div class="title-right CD-title-right fr" @click="refeshMV">
           刷新一下
         </div>
-      </div>
-      <div class="MV-content">
-        <div class="MV-box" v-for="(item, index) in MV" :key="index">
-          <div class="MV-img" @click="fail()">
-            <img :src="item.cover" class="auto-img" alt="" />
-            <span class="MV-play">{{ item.mv.dayplays }}</span>
-          </div>
-          <div class="MV-text van-multi-ellipsis--l2" @click="fail()">
-            {{
-              item.mv.desc
-            }}云音乐新歌榜：云音乐用户一周内收听所有新歌（一月内最新发行）
-            官方TOP排行榜，每天更新。
-          </div>
-        </div>
-      </div>
+      </MyTitle>
+      <MyMV :list="MV" :isHasMV="true"></MyMV>
     </div>
     <!-- 歌单推荐层 -->
     <div class="CD">
-      <div class="CD-title clearfix">
-        <div class="title-left fl">最热歌单推荐</div>
+      <MyTitle title="最热歌单推荐">
         <div
           class="title-right CD-title-right fr"
           v-show="finished"
@@ -118,7 +125,7 @@
         >
           刷新一下
         </div>
-      </div>
+      </MyTitle>
       <van-list
         class="loading-box"
         v-model="loading"
@@ -127,47 +134,25 @@
         offset="20"
         @load="loadData"
       >
-        <div class="CD-content">
-          <div
-            class="CD-item"
-            v-for="(item, index) in newsongsData"
-            :key="index"
-          >
-            <div
-              class="item-img"
-              @click="
-                goCDDetail(
-                  item.id,
-                  item.name,
-                  item.coverImgUrl,
-                  item.playCount,
-                  item.creator.nickname,
-                  item.creator.avatarUrl
-                )
-              "
-            >
-              <img :src="item.coverImgUrl" class="auto-img" alt="" />
-              <span class="playCount">{{ item.playCount }}</span>
-            </div>
-            <div
-              class="item-text van-multi-ellipsis--l2"
-              @click="goDetail(item.id)"
-            >
-              {{ item.name }}
-            </div>
-          </div>
-        </div>
+        <MyCD :CD="newsongsData"></MyCD>
       </van-list>
     </div>
   </div>
 </template>
 <script>
-// 导入登录验证验证脚本
-import { login } from '../assets/js/login'
 import { formatDuring } from '../assets/js/formatDuring'
+import { mapActions, mapState } from 'vuex'
+import MyMV from '../components/MyMV'
+import MyCD from '../components/MyCD'
+import MyTitle from '../components//MyTitle'
 import '../assets/less/Recommend.less'
 export default {
   name: 'Recommend',
+  components: {
+    MyMV,
+    MyCD,
+    MyTitle,
+  },
   data() {
     return {
       // 轮播层数据
@@ -214,7 +199,13 @@ export default {
     // 获取MV数据
     this.getMV()
   },
+  computed: {
+    ...mapState({
+      audio: (state) => state.playList.playList,
+    }),
+  },
   methods: {
+    ...mapActions('playList', ['unshiftPlayList', 'deletePlayList']),
     // 获取轮播图数据事件
     getBannerData() {
       this.$toast.loading({
@@ -232,11 +223,9 @@ export default {
         .then((result) => {
           if (result.data.code == 200) {
             this.$toast.clear()
-            console.log('banner =>', result)
             result.data.banners.map((v) => {
               this.bannerData.push(v)
             })
-            console.log(this.bannerData)
           }
         })
         .catch((err) => {
@@ -245,11 +234,16 @@ export default {
     },
     // 播放音乐
     play(id, name, pic, artists) {
+      let hasID = this.audio.find((v) => {
+        return v.id == id
+      })
+      console.log(hasID)
+      if (hasID) {
+        this.deletePlayList(id)
+      }
       // 获取歌曲URL
       let url = ''
-      this.changePic(pic)
-      this.changeArtists(artists)
-      this.changeName(name)
+      let musicStr = ''
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -265,9 +259,9 @@ export default {
         .then((result) => {
           if (result.data.code == 200) {
             url = result.data.data[0].url
-            this.changeSrc(url)
+            musicStr = `id=${id};name=${name};artist=${artists};url=${url};cover=${pic};`
             // 获取歌词
-            this.getLyric(id)
+            this.getLyric(id, musicStr, name)
             this.$toast.clear()
           }
         })
@@ -276,7 +270,7 @@ export default {
         })
     },
     // 获取歌词
-    getLyric(id) {
+    getLyric(id, musicStr, name) {
       let lyric = ''
       this.$toast.loading({
         message: '加载中...',
@@ -293,8 +287,10 @@ export default {
         .then((result) => {
           if (result.data.code == 200) {
             lyric = result.data.lrc.lyric
-            this.changeLyric(lyric)
-            this.$refs.aplayer.play()
+            musicStr += musicStr + 'lrc=' + lyric + ';'
+            let musicObj = formatDuring.parseStrObjByRegExp(musicStr)
+            this.unshiftPlayList(musicObj)
+            console.log(this.$store.state)
             this.$toast.clear()
           }
         })
@@ -324,22 +320,6 @@ export default {
         .catch((err) => {
           this.$toast.clear()
         })
-    },
-    // 修改src元素,保存在公共数据state中
-    changeSrc(url) {
-      this.$store.commit('changeSrc', url)
-    },
-    changeLyric(lyric) {
-      this.$store.commit('changeLyric', lyric)
-    },
-    changePic(pic) {
-      this.$store.commit('changePic', pic)
-    },
-    changeArtists(artists) {
-      this.$store.commit('changeArtists', artists)
-    },
-    changeName(name) {
-      this.$store.commit('changeName', name)
     },
     // 获取榜单数据
     getTopData() {
@@ -437,13 +417,6 @@ export default {
           this.$toast.clear()
         })
     },
-    // 点击MV事件
-    fail() {
-      this.$toast.fail({
-        message: '版权问题,无法观看MV',
-        forbidClick: true,
-      })
-    },
     // 获取推荐新歌单
     getNewsongsData() {
       this.$toast.loading({
@@ -531,26 +504,50 @@ export default {
         })
     },
     // 前往详情页事件
-    goDetail(id, name, time) {
-      this.axios({
-        method: 'GET',
-        url: '/check/music',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.status == 200) {
-            if (result.data.success) {
-              this.$router.push({ name: 'Detail', params: { id, name, time } })
-            } else {
-              this.$toast(result.data.message)
+    goDetail(id, name, pic, artists) {
+      if (id) {
+        this.axios({
+          method: 'GET',
+          url: '/check/music',
+          params: {
+            id: id,
+          },
+        })
+          .then((result) => {
+            if (result.status == 200) {
+              if (result.data.success) {
+                this.play(id, name, pic, artists)
+                setTimeout(() => {
+                  this.$router.push({
+                    name: 'Detail',
+                    params: { id },
+                  })
+                })
+              } else {
+                this.$toast(result.data.message)
+              }
             }
-          }
+          })
+          .catch((err) => {
+            this.$toast.clear()
+          })
+      } else {
+        this.$toast.clear('版权问题,无法跳转到响应页面')
+      }
+    },
+    goBannerDetail(bannerObj) {
+      if (bannerObj) {
+        this.$router.push({
+          name: 'Detail',
+          params: {
+            id: bannerObj.id,
+            name: bannerObj.name,
+            time: bannerObj.dt,
+          },
         })
-        .catch((err) => {
-          this.$toast.clear()
-        })
+      } else {
+        this.$toast('版权问题,无法跳转')
+      }
     },
     goArtistsDetail(id, name) {
       this.$router.push({ name: 'Artists', params: { id, name } })

@@ -13,9 +13,14 @@
       </template>
     </van-nav-bar>
     <!-- 标题层 -->
-    <div class="CD-head clearfix" v-for="(item, index) in likeCD" :key="index">
+    <myTopContent
+      class="clearfix"
+      v-for="(item, index) in likeCD"
+      :key="index"
+      @click="playAll"
+    >
       <div class="CD-img fl">
-        <img :src="item.coverImgUrl" class="auto-img" alt="" />
+        <van-image lazy-load :src="item.coverImgUrl" class="auto-img" alt="" />
         <span class="CD-count">{{ item.playCount }}</span>
       </div>
       <div class="CD-title fr">
@@ -23,13 +28,18 @@
           {{ item.name }}
         </div>
         <div class="CD-enname clearfix">
-          <img :src="item.creator.avatarUrl" class="auto-img fl" alt="" />
+          <van-image
+            lazy-load
+            :src="item.creator.avatarUrl"
+            class="fl"
+            alt=""
+          />
           <div class="CD-artists van-ellipsis fr">
             {{ item.creator.nickname }}
           </div>
         </div>
       </div>
-    </div>
+    </myTopContent>
 
     <!-- 歌曲栏 -->
     <div class="CD-songlist" v-if="hasSong">
@@ -94,7 +104,9 @@
 
 <script>
 import { formatDuring } from '../assets/js/formatDuring'
+import { mapActions, mapState } from 'vuex'
 import '../assets/less/Like.less'
+import myTopContent from '../components/MyTopContent'
 export default {
   name: 'Like',
   data() {
@@ -120,7 +132,21 @@ export default {
   created() {
     this.getUserSubcount()
   },
+  components: {
+    myTopContent,
+  },
+  computed: {
+    ...mapState({
+      audio: (state) => state.playList.playList,
+    }),
+  },
   methods: {
+    ...mapActions('playList', [
+      'unshiftPlayList',
+      'deletePlayList',
+      'pushPlayList',
+      'upLoadPlayList',
+    ]),
     // 获取我喜欢的歌单
     getUserSubcount() {
       this.userId = Number(localStorage.getItem('_userID'))
@@ -158,6 +184,7 @@ export default {
         },
       })
         .then((result) => {
+          console.log(result)
           if (result.data.playlist.trackCount) {
             this.hasSong = true
             let tracks = result.data.playlist.tracks
@@ -181,11 +208,16 @@ export default {
     },
     // 播放音乐
     play(id, name, pic, artists) {
+      let hasID = this.audio.find((v) => {
+        return v.id == id
+      })
+
+      if (hasID) {
+        this.deletePlayList(id)
+      }
       // 获取歌曲URL
       let url = ''
-      this.changePic(pic)
-      this.changeArtists(artists)
-      this.changeName(name)
+      let musicStr = ''
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -201,9 +233,9 @@ export default {
         .then((result) => {
           if (result.data.code == 200) {
             url = result.data.data[0].url
-            this.changeSrc(url)
+            musicStr = `id=${id};name=${name};artist=${artists};url=${url};cover=${pic};`
             // 获取歌词
-            this.getLyric(id)
+            this.getLyric(id, musicStr, name)
             this.$toast.clear()
           }
         })
@@ -212,7 +244,7 @@ export default {
         })
     },
     // 获取歌词
-    getLyric(id) {
+    getLyric(id, musicStr, name) {
       let lyric = ''
       this.$toast.loading({
         message: '加载中...',
@@ -228,10 +260,10 @@ export default {
       })
         .then((result) => {
           if (result.data.code == 200) {
-            console.log('lyric', result)
             lyric = result.data.lrc.lyric
-            this.changeLyric(lyric)
-            this.$refs.aplayer.play()
+            musicStr += musicStr + 'lrc=' + lyric + ';'
+            let musicObj = formatDuring.parseStrObjByRegExp(musicStr)
+            this.unshiftPlayList(musicObj)
             this.$toast.clear()
           }
         })
@@ -239,21 +271,23 @@ export default {
           this.$toast.clear()
         })
     },
-    // 修改src元素,保存在公共数据state中
-    changeSrc(url) {
-      this.$store.commit('changeSrc', url)
-    },
-    changeLyric(lyric) {
-      this.$store.commit('changeLyric', lyric)
-    },
-    changePic(pic) {
-      this.$store.commit('changePic', pic)
-    },
-    changeArtists(artists) {
-      this.$store.commit('changeArtists', artists)
-    },
-    changeName(name) {
-      this.$store.commit('changeName', name)
+    // 播放全部音乐
+    playAll() {
+      this.$dialog
+        .confirm({
+          title: '提示信息',
+          message: '是否切换当前音乐列表',
+        })
+        .then(() => {
+          this.upLoadPlayList()
+          console.log(this.likeSong)
+          this.likeSong.map((v) => {
+            this.play(v.id, v.name, v.al.picUrl, v.ar[0].name)
+          })
+        })
+        .catch(() => {
+          return
+        })
     },
     goDetail(id, name, time) {
       this.axios({

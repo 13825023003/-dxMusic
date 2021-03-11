@@ -41,32 +41,7 @@
           offset="20"
           @load="loadData"
         >
-          <div
-            class="classify-item clearfix"
-            v-for="(item, index) in artistsData"
-            :key="'info2-' + index"
-          >
-            <div class="item-img fl">
-              <img :src="item.picUrl" alt="无图片显示" class="auto-img" />
-            </div>
-            <div class="item-text fr">
-              <div
-                class="item-name"
-                @click="
-                  goArtists(
-                    item.id,
-                    item.name,
-                    item.picUrl,
-                    item.musicSize,
-                    item.albumSize
-                  )
-                "
-              >
-                {{ item.name }}
-              </div>
-              <div class="item-enname">专辑数:{{ item.albumSize }}</div>
-            </div>
-          </div>
+          <MyArtists :artists="artistsData"></MyArtists>
         </van-list>
       </div>
     </div>
@@ -75,10 +50,14 @@
 
 <script>
 import '../assets/less/Classfiy.less'
+import MyArtists from '../components/MyArtists'
 export default {
   name: 'Classify',
   created() {
     this.getallArtistsData()
+  },
+  components: {
+    MyArtists,
   },
   data() {
     return {
@@ -161,15 +140,21 @@ export default {
         forbidClick: true,
         duration: 0,
       })
+      this.startCount = 0
       this.allArtistsData = this.allArtistsData.splice(0, -1)
       this.artistsData = this.artistsData.splice(0, -1)
       if (this.areaCount.indexOf(item) != -1) {
         this.area = item
         this.areaIndex = index
+        if (!this.type) {
+          this.type = -1
+        }
       } else {
         this.type = item
         this.typeIndex = index
       }
+      console.log('this.type', this.type)
+      console.log('this.area', this.area)
       this.axios({
         method: 'GET',
         url: '/artist/list',
@@ -192,6 +177,8 @@ export default {
           this.startCount += this.dataCount
           // 未加载
           this.loading = false
+          console.log('this.allArtists', this.allArtistsData)
+          console.log('this.artists', this.artistsData)
         })
         .catch((err) => {
           this.$toast.clear()
@@ -213,15 +200,6 @@ export default {
         }
       }, 1500)
     },
-    // 去往歌手详情页
-    goArtists(id, name, pic, songCount, albumCount) {
-      this.$router.push({
-        name: 'Artists',
-        params: { id, name, pic, songCount, albumCount },
-      })
-    },
   },
 }
 </script>
-
-<style lang="less" scoped></style>

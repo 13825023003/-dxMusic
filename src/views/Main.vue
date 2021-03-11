@@ -24,7 +24,10 @@
         <span>{{ item.title }}</span>
         <!-- 自定义图标 -->
         <template #icon="props">
-          <img :src="props.active ? item.activeImg : item.inactiveImg" />
+          <van-image
+            lazy-load
+            :src="props.active ? item.activeImg : item.inactiveImg"
+          />
         </template>
       </van-tabbar-item>
     </van-tabbar>

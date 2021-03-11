@@ -93,7 +93,7 @@
             <div class="hot-name" @click="goSearchResult(item.searchWord)">
               {{ item.searchWord }}
               <span class="hot-logo"
-                ><img src="../assets/image/hot.png" alt=""
+                ><img lazy-load src="../assets/image/hot.png" alt=""
               /></span>
               <span class="hot-count">{{ item.score }}</span>
             </div>
@@ -108,6 +108,7 @@
 </template>
 
 <script>
+import '../assets/less/Search.less'
 export default {
   name: 'Search',
   data() {
@@ -252,5 +253,4 @@ export default {
     },
   },
 }
-import '../assets/less/Search.less'
 </script>

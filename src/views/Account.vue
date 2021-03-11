@@ -20,7 +20,7 @@
       <van-cell title="头像" :center="true">
         <div>
           <div class="user-img fr">
-            <img :src="userImg" class="auto-img" alt="" />
+            <van-image lazy-load :src="userImg" class="auto-img" alt="" />
             <van-uploader
               class="upload-box"
               :after-read="uploadUserImg"

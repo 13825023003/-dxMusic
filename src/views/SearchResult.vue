@@ -63,87 +63,13 @@
     <div class="result-tab">
       <van-tabs @click="onClick">
         <van-tab title="歌曲">
-          <div class="songs-content">
-            <div
-              class="songs-item clearfix"
-              v-for="(item, index) in searchResult"
-              :key="index"
-            >
-              <div class="img-box fl">
-                <van-icon
-                  :name="item.isLike ? 'like' : 'like-o'"
-                  :color="item.isLike ? 'red ' : 'black'"
-                  @click="toggleLike(item, item.id)"
-                ></van-icon>
-              </div>
-              <div class="img-box fl">
-                <img
-                  src="../assets/image/下载.png"
-                  class="auto-img fl"
-                  alt=""
-                  @click="download(item.id)"
-                />
-              </div>
-              <div
-                class="name fl van-ellipsis"
-                @click="
-                  goDetail(item.id, keywords, index, item.dt, item.isLike)
-                "
-              >
-                {{ item.name }}
-              </div>
-
-              <div class="times fr">{{ item.dts }}</div>
-            </div>
-          </div>
+          <MySonglist2 :song="searchResult"></MySonglist2>
         </van-tab>
-        <van-tab title="歌手"
-          ><div class="aritsts-content">
-            <div
-              class="artists-item clearfix"
-              v-for="(item, index) in searchResult"
-              :key="index"
-            >
-              <div class="item-img fl">
-                <img :src="item.picUrl" alt="无图片显示" class="auto-img" />
-              </div>
-              <div class="item-text fr">
-                <div class="item-name">{{ item.name }}</div>
-                <div class="item-enname">专辑数:{{ item.albumSize }}</div>
-              </div>
-            </div>
-          </div>
+        <van-tab title="歌手">
+          <MyArtists :artists="searchResult"></MyArtists>
         </van-tab>
         <van-tab title="歌单">
-          <div class="CD-content">
-            <div
-              class="CD-item"
-              v-for="(item, index) in searchResult"
-              :key="index"
-            >
-              <div class="CD-img">
-                <span class="playCount">{{ item.playCount }}</span>
-                <img
-                  :src="item.coverImgUrl"
-                  alt="无图片显示"
-                  class="auto-img"
-                  @click="
-                    goCDDetail(
-                      item.id,
-                      item.name,
-                      item.coverImgUrl,
-                      item.playCount,
-                      item.creator.nickname,
-                      item.creator.avatarUrl
-                    )
-                  "
-                />
-              </div>
-              <div class="CD-text van-multi-ellipsis--l2">
-                {{ item.name }}
-              </div>
-            </div>
-          </div>
+          <MyCD :CD="searchResult"></MyCD>
         </van-tab>
       </van-tabs>
     </div>
@@ -153,6 +79,9 @@
 <script>
 import '../assets/less/SearchResult.less'
 import { formatDuring } from '../assets/js/formatDuring'
+import MyCD from '../components/MyCD'
+import MyArtists from '../components/MyArtists'
+import MySonglist2 from '../components/MySonglist2'
 export default {
   name: 'SearchResult',
   data() {
@@ -171,6 +100,11 @@ export default {
       songsUrl: '',
       listFolded: true,
     }
+  },
+  components: {
+    MyCD,
+    MyArtists,
+    MySonglist2,
   },
   created() {
     //   获取搜索关键词
@@ -217,30 +151,7 @@ export default {
     back() {
       this.$router.go(-1)
     },
-    // 切换是否喜爱歌曲
-    toggleLike(item, id) {
-      item.isLike = !item.isLike
-      this.$toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        duration: 0,
-      })
-      this.axios({
-        method: 'GET',
-        url: '/like',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.data.code == 200) {
-            this.$toast.clear()
-          }
-        })
-        .catch((err) => {
-          this.$toast.clear()
-        })
-    },
+
     // 切换标签
     onClick(name) {
       if (name == 0) {
@@ -309,65 +220,6 @@ export default {
         .catch((err) => {
           this.$toast.clear()
         })
-    },
-    // 下载歌曲
-    download(id) {
-      this.$toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        duration: 0,
-      })
-      this.axios({
-        method: 'GET',
-        url: '/song/url',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.data.code == 200) {
-            this.$toast.clear()
-            result.data.data.map((v) => {
-              this.songsUrl = v.url
-            })
-
-            window.location.href = this.songsUrl
-          }
-        })
-        .catch((err) => {
-          this.$toast.clear()
-        })
-    },
-    // 去往详情页
-    goDetail(id, name, index, time, like) {
-      this.axios({
-        method: 'GET',
-        url: '/check/music',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.status == 200) {
-            if (result.data.success) {
-              this.$router.push({
-                name: 'Detail',
-                params: { id, name, index, time, like },
-              })
-            } else {
-              this.$toast(result.data.message)
-            }
-          }
-        })
-        .catch((err) => {
-          this.$toast.clear()
-        })
-    },
-    goCDDetail(id, name, img, playCount, nickname, avatarUrl) {
-      this.$router.push({
-        name: 'CD',
-        params: { id, name, img, playCount, nickname, avatarUrl },
-      })
     },
   },
 }

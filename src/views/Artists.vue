@@ -13,9 +13,9 @@
       </template>
     </van-nav-bar>
     <!-- 歌手层头部 -->
-    <div class="artists-head clearfix">
+    <myTopContent class="clearfix" @click="playAll()">
       <div class="artists-img fl">
-        <img :src="artistsData[2]" class="auto-img" alt="" />
+        <van-image lazy-load :src="artistsData[2]" class="auto-img" alt="" />
       </div>
       <div class="artists-text fr clearfix">
         <div class="artists-name ">
@@ -34,11 +34,10 @@
           }}
         </div>
       </div>
-    </div>
+    </myTopContent>
     <!-- 歌手层内容层 -->
     <div class="artists-content">
       <van-tabs
-        @click="tabs"
         sticky
         title-active-color="#f5b83f"
         title-inactive-color="#1c1c1c"
@@ -55,35 +54,7 @@
               offset="20"
               @load="loadData"
             >
-              <div
-                class="songs-item clearfix"
-                v-for="(item, index) in topSong"
-                :key="'info2-' + index"
-              >
-                <div class="img-box fl">
-                  <van-icon
-                    :name="item.isLike ? 'like' : 'like-o'"
-                    :color="item.isLike ? 'red ' : 'black'"
-                    @click="toggleLike(item, item.id)"
-                  ></van-icon>
-                </div>
-                <div class="img-box fl">
-                  <img
-                    src="../assets/image/下载.png"
-                    class="auto-img fl"
-                    alt=""
-                    @click="download(item.id)"
-                  />
-                </div>
-                <div
-                  class="name fl van-ellipsis"
-                  @click="goDetail(item.id, item.name, 0, item.dt)"
-                >
-                  {{ item.name }}
-                </div>
-
-                <div class="times fr">{{ item.dts }}</div>
-              </div>
+              <MySonglist2 :song="topSong"></MySonglist2>
             </van-list>
           </div>
         </van-tab>
@@ -98,29 +69,7 @@
           </div>
         </van-tab>
         <van-tab title="MV">
-          <div class="MV-content" v-if="hasMV">
-            <div
-              class="MV-item"
-              v-for="(item, index) in MV"
-              :key="'info3-' + index"
-            >
-              <div class="MV-img" @click="fail()">
-                <img :src="item.imgurl" class="auto-img" alt="" />
-              </div>
-              <div class="MV-name van-multi-ellipsis--l2">
-                {{ item.name }}
-              </div>
-              <span class="MV-count">
-                {{ item.playCount }}
-              </span>
-              <span class="MV-time">
-                {{ item.duration }}
-              </span>
-            </div>
-          </div>
-          <div class="MV-else" v-else>
-            <h2>该歌手暂无相关MV</h2>
-          </div>
+          <MyMV :list="MV" :isHasMV="hasMV"></MyMV>
         </van-tab>
         <van-tab title="相似歌手">
           <div class="smilar-content" v-if="hasSimilar">
@@ -130,7 +79,8 @@
               :key="'info4-' + index"
             >
               <div class="item-img fl">
-                <img
+                <van-image
+                  lazy-load
                   :src="item.picUrl"
                   alt="无图片显示"
                   class="auto-img"
@@ -167,9 +117,24 @@
 
 <script>
 import '../assets/less/Artists.less'
+import MyMV from '../components/MyMV'
+import MySonglist2 from '../components/MySonglist2'
+import myTopContent from '../components/MyTopContent'
 import { formatDuring } from '../assets/js/formatDuring'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'Artist',
+  components: {
+    MyMV,
+    MySonglist2,
+    myTopContent,
+  },
+  computed: {
+    ...mapState({
+      audio: (state) => state.playList.playList,
+    }),
+  },
+
   data() {
     return {
       // 记录是否收藏
@@ -218,11 +183,19 @@ export default {
     this.getSimilar(this.artistsID)
   },
   methods: {
+    ...mapActions('playList', [
+      'unshiftPlayList',
+      'deletePlayList',
+      'pushPlayList',
+      'upLoadPlayList',
+    ]),
     // 获取歌手信息
     getArtistsData() {
+      console.log(this.$route.params)
       for (let i in this.$route.params) {
         this.artistsData.push(this.$route.params[i])
       }
+      console.log(this.artistsData)
       this.artistsID = this.artistsData[0]
     },
     // 获取歌手MV
@@ -250,6 +223,7 @@ export default {
               result.data.mvs.map((v) => {
                 v.duration = formatDuring.formatDuring(v.duration)
                 this.MV.push(v)
+                console.log('this.MV', this.MV)
               })
             }
           }
@@ -289,6 +263,87 @@ export default {
         })
         .catch((err) => {
           this.$toast.clear()
+        })
+    },
+    // 播放音乐
+    play(id, name, pic, artists) {
+      let hasID = this.audio.find((v) => {
+        return v.id == id
+      })
+      if (hasID) {
+        this.deletePlayList(id)
+      }
+      // 获取歌曲URL
+      let url = ''
+      let musicStr = ''
+      this.$toast.loading({
+        message: '加载中...',
+        forbidClick: true,
+        duration: 0,
+      })
+      this.axios({
+        method: 'GET',
+        url: '/song/url',
+        params: {
+          id: id,
+        },
+      })
+        .then((result) => {
+          if (result.data.code == 200) {
+            url = result.data.data[0].url
+            musicStr = `id=${id};name=${name};artist=${artists};url=${url};cover=${pic};`
+            // 获取歌词
+            this.getLyric(id, musicStr, name)
+            this.$toast.clear()
+          }
+        })
+        .catch((err) => {
+          this.$toast.clear()
+        })
+    },
+    // 获取歌词
+    getLyric(id, musicStr, name) {
+      let lyric = ''
+      this.$toast.loading({
+        message: '加载中...',
+        forbidClick: true,
+        duration: 0,
+      })
+      this.axios({
+        method: 'GET',
+        url: '/lyric',
+        params: {
+          id: id,
+        },
+      })
+        .then((result) => {
+          if (result.data.code == 200) {
+            lyric = result.data.lrc.lyric
+            musicStr += musicStr + 'lrc=' + lyric + ';'
+            let musicObj = formatDuring.parseStrObjByRegExp(musicStr)
+            this.unshiftPlayList(musicObj)
+            this.$toast.clear()
+          }
+        })
+        .catch((err) => {
+          this.$toast.clear()
+        })
+    },
+    // 播放全部音乐
+    playAll() {
+      this.$dialog
+        .confirm({
+          title: '提示信息',
+          message: '是否切换当前音乐列表',
+        })
+        .then(() => {
+          this.upLoadPlayList()
+          this.allTopSong.map((v) => {
+            this.play(v.id, v.name, v.al.picUrl, v.ar[0].name)
+          })
+        })
+        .catch(() => {
+          return
         })
     },
     // 懒加载事件
@@ -361,99 +416,13 @@ export default {
           this.$toast.clear()
         })
     },
-    // 切换Tab栏
-    tabs(name, title) {},
     // 收藏
     toggleSub() {
       this.isSub = !this.isSub
     },
-    // 下载歌曲
-    download(id) {
-      this.$toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        duration: 0,
-      })
-      this.axios({
-        method: 'GET',
-        url: '/song/url',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.data.code == 200) {
-            this.$toast.clear()
-            result.data.data.map((v) => {
-              this.songsUrl = v.url
-            })
-
-            window.location.href = this.songsUrl
-          }
-        })
-        .catch((err) => {
-          this.$toast.clear()
-        })
-    },
-    // 切换是否喜爱歌曲
-    toggleLike(item, id) {
-      item.isLike = !item.isLike
-      this.$toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        duration: 0,
-      })
-      this.axios({
-        method: 'GET',
-        url: '/like',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.data.code == 200) {
-            this.$toast.clear()
-          }
-        })
-        .catch((err) => {
-          this.$toast.clear()
-        })
-    },
     // 返回上一页
     back() {
       this.$router.go(-1)
-    },
-    // 点击MV事件
-    fail() {
-      this.$toast.fail({
-        message: '版权问题,无法观看MV',
-        forbidClick: true,
-      })
-    },
-    // 去往歌曲详情页
-    goDetail(id, name, index, time) {
-      this.axios({
-        method: 'GET',
-        url: '/check/music',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.status == 200) {
-            if (result.data.success) {
-              this.$router.push({
-                name: 'Detail',
-                params: { id, name, index, time },
-              })
-            } else {
-              this.$toast(result.data.message)
-            }
-          }
-        })
-        .catch((err) => {
-          this.$toast.clear()
-        })
     },
     // 去往歌手详情页
     goArtists(id, name, pic, songCount, albumCount) {
@@ -482,82 +451,6 @@ export default {
         this.activeName = 0
         this.$toast.clear()
       }, 800)
-    },
-    // 播放音乐
-    play(id, name, pic, artists) {
-      // 获取歌曲URL
-      let url = ''
-      this.changePic(pic)
-      this.changeArtists(artists)
-      this.changeName(name)
-      this.$toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        duration: 0,
-      })
-      this.axios({
-        method: 'GET',
-        url: '/song/url',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.data.code == 200) {
-            url = result.data.data[0].url
-            this.changeSrc(url)
-            // 获取歌词
-            this.getLyric(id)
-            this.$toast.clear()
-          }
-        })
-        .catch((err) => {
-          this.$toast.clear()
-        })
-    },
-    // 获取歌词
-    getLyric(id) {
-      let lyric = ''
-      this.$toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        duration: 0,
-      })
-      this.axios({
-        method: 'GET',
-        url: '/lyric',
-        params: {
-          id: id,
-        },
-      })
-        .then((result) => {
-          if (result.data.code == 200) {
-            console.log('lyric', result)
-            lyric = result.data.lrc.lyric
-            this.changeLyric(lyric)
-            this.$refs.aplayer.play()
-            this.$toast.clear()
-          }
-        })
-        .catch((err) => {
-          this.$toast.clear()
-        })
-    },
-    // 修改src元素,保存在公共数据state中
-    changeSrc(url) {
-      this.$store.commit('changeSrc', url)
-    },
-    changeLyric(lyric) {
-      this.$store.commit('changeLyric', lyric)
-    },
-    changePic(pic) {
-      this.$store.commit('changePic', pic)
-    },
-    changeArtists(artists) {
-      this.$store.commit('changeArtists', artists)
-    },
-    changeName(name) {
-      this.$store.commit('changeName', name)
     },
   },
 }
