@@ -79,6 +79,8 @@ export default {
 </script>
 
 <style lang="less">
+@secondColor: #1c1c1c;
+@borderColor: #f5b83f;
 body {
   background-color: white;
 }
@@ -89,7 +91,6 @@ body {
   font-size: 16px;
   color: #505050;
 }
-
 .auto-img {
   width: 100%;
   height: 100%;

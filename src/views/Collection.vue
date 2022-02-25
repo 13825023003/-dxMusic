@@ -28,7 +28,7 @@
     </div>
     <!-- 内容层 -->
     <div class="create-CD">
-      <van-tabs v-model="active" @click="onclick()">
+      <van-tabs v-model="active">
         <van-tab title="收藏的歌单">
           <div class="collectionCD-content">
             <van-list
@@ -44,28 +44,46 @@
                 v-for="(item, index) in userCollectionCD"
                 :key="index"
               >
-                <div class="item-img fl">
-                  <van-image
-                    lazy-load
-                    :src="item.coverImgUrl"
-                    alt="无图片显示"
-                    class="auto-img"
-                    @click="
-                      goCDDetail(
-                        item.id,
-                        item.name,
-                        item.coverImgUrl,
-                        item.playCount,
-                        item.creator.nickname,
-                        item.creator.avatarUrl
-                      )
-                    "
-                  />
-                  <span>
-                    <van-icon
-                      name="play-circle-o"
-                      size="40"
-                      color="#fff"
+                <van-swipe-cell>
+                  <div class="item-img fl">
+                    <van-image
+                      lazy-load
+                      :src="item.coverImgUrl"
+                      alt="无图片显示"
+                      class="auto-img"
+                      @click="
+                        goCDDetail(
+                          item.id,
+                          item.name,
+                          item.coverImgUrl,
+                          item.playCount,
+                          item.creator.nickname,
+                          item.creator.avatarUrl
+                        )
+                      "
+                    />
+                    <span>
+                      <van-icon
+                        name="play-circle-o"
+                        size="40"
+                        color="#fff"
+                        @click="
+                          goCDDetail(
+                            item.id,
+                            item.name,
+                            item.coverImgUrl,
+                            item.playCount,
+                            item.creator.nickname,
+                            item.creator.avatarUrl
+                          )
+                        "
+                      >
+                      </van-icon>
+                    </span>
+                  </div>
+                  <div class="item-text fr">
+                    <div
+                      class="item-name van-multi-ellipsis--l2"
                       @click="
                         goCDDetail(
                           item.id,
@@ -77,27 +95,20 @@
                         )
                       "
                     >
-                    </van-icon>
-                  </span>
-                </div>
-                <div class="item-text fr">
-                  <div
-                    class="item-name van-multi-ellipsis--l2"
-                    @click="
-                      goCDDetail(
-                        item.id,
-                        item.name,
-                        item.coverImgUrl,
-                        item.playCount,
-                        item.creator.nickname,
-                        item.creator.avatarUrl
-                      )
-                    "
-                  >
-                    {{ item.name }}
+                      {{ item.name }}
+                    </div>
+                    <div class="item-enname">{{ item.trackCount }}首</div>
                   </div>
-                  <div class="item-enname">{{ item.trackCount }}首</div>
-                </div>
+                  <template #right>
+                    <van-button
+                      square
+                      text="删除"
+                      type="danger"
+                      class="delete-button"
+                      @click="deleteSongList(item, index, 1)"
+                    />
+                  </template>
+                </van-swipe-cell>
               </div>
             </van-list>
           </div>
@@ -117,46 +128,57 @@
                 v-for="(item, index) in userCreateCD"
                 :key="index"
               >
-                <div class="item-img fl">
-                  <van-image
-                    lazy-load
-                    :src="item.coverImgUrl"
-                    alt="无图片显示"
-                    class="auto-img"
-                    @click="
-                      goCDDetail(
-                        item.id,
-                        item.name,
-                        item.coverImgUrl,
-                        item.playCount,
-                        item.creator.nickname,
-                        item.creator.avatarUrl
-                      )
-                    "
-                  />
-                  <span>
-                    <van-icon name="play-circle-o" size="40" color="#fff">
-                    </van-icon>
-                  </span>
-                </div>
-                <div class="item-text fr">
-                  <div
-                    class="item-name van-multi-ellipsis--l2"
-                    @click="
-                      goCDDetail(
-                        item.id,
-                        item.name,
-                        item.coverImgUrl,
-                        item.playCount,
-                        item.creator.nickname,
-                        item.creator.avatarUrl
-                      )
-                    "
-                  >
-                    {{ item.name }}
+                <van-swipe-cell>
+                  <div class="item-img fl">
+                    <van-image
+                      lazy-load
+                      :src="item.coverImgUrl"
+                      alt="无图片显示"
+                      class="auto-img"
+                      @click="
+                        goCDDetail(
+                          item.id,
+                          item.name,
+                          item.coverImgUrl,
+                          item.playCount,
+                          item.creator.nickname,
+                          item.creator.avatarUrl
+                        )
+                      "
+                    />
+                    <span>
+                      <van-icon name="play-circle-o" size="40" color="#fff">
+                      </van-icon>
+                    </span>
                   </div>
-                  <div class="item-enname">{{ item.trackCount }}首</div>
-                </div>
+                  <div class="item-text fr">
+                    <div
+                      class="item-name van-multi-ellipsis--l2"
+                      @click="
+                        goCDDetail(
+                          item.id,
+                          item.name,
+                          item.coverImgUrl,
+                          item.playCount,
+                          item.creator.nickname,
+                          item.creator.avatarUrl
+                        )
+                      "
+                    >
+                      {{ item.name }}
+                    </div>
+                    <div class="item-enname">{{ item.trackCount }}首</div>
+                  </div>
+                  <template #right>
+                    <van-button
+                      square
+                      text="删除"
+                      type="danger"
+                      class="delete-button"
+                      @click="deleteSongList(item, index, 2)"
+                    />
+                  </template>
+                </van-swipe-cell>
               </div>
             </van-list>
           </div>
@@ -301,6 +323,35 @@ export default {
         }
       }, 1500)
     },
+    deleteSongList(item, index, i) {
+      item.id = Number(item.id)
+      this.$dialog
+        .confirm({
+          title: '提示内容',
+          message: '是否删除当前选中的歌曲',
+        })
+        .then(() => {
+          this.axios({
+            url: '/playlist/delete',
+            params: {
+              id: item.id,
+            },
+          })
+            .then((result) => {
+              console.log(result)
+              if (i == 1) {
+                this.userCollectionCD.splice(index, 1)
+              } else {
+                this.userCreateCD.splice(index, 1)
+              }
+              this.$toast('删除歌单成功')
+            })
+            .catch((err) => {})
+        })
+        .catch(() => {
+          // on cancel
+        })
+    },
     // 返回上一个页面
     back() {
       this.$router.go(-1)
@@ -311,7 +362,6 @@ export default {
         params: { id, name, img, playCount, nickname, avatarUrl },
       })
     },
-    onclick() {},
   },
 }
 </script>

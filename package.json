@@ -12,6 +12,7 @@
     "better-scroll": "^2.0.6",
     "core-js": "^3.6.5",
     "default-passive-events": "^2.0.0",
+    "echarts": "^5.0.2",
     "lrc-file-parser": "^1.0.5",
     "vant": "^2.10.13",
     "vue": "^2.6.11",

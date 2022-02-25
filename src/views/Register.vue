@@ -64,6 +64,7 @@
         placeholder="password"
         autocomplete="off"
         left-icon="goods-collect-o"
+        class="password"
       />
       <van-field
         v-model="userInfo.surepassword"
@@ -71,6 +72,7 @@
         placeholder="surePassword"
         autocomplete="off"
         left-icon="goods-collect-o"
+        class="surepassword"
       />
       <div class="commit-btn">
         <van-button round block color="#1c1c1c" @click="register">
@@ -251,6 +253,16 @@ export default {
   }
   /deep/.van-form .contact {
     margin-left: 62px;
+    position: relative;
+    top: -20px;
+  }
+  /deep/.van-form .password {
+    position: relative;
+    top: -20px;
+  }
+  /deep/.van-form .surepassword {
+    position: relative;
+    top: -20px;
   }
   input::-webkit-input-placeholder {
     color: red;
@@ -259,6 +271,8 @@ export default {
   }
   /deep/.van-form .commit-btn .van-button {
     &:first-child {
+      position: relative;
+      top: -70px;
       width: 60px;
       margin-top: 80px;
       width: 250px;

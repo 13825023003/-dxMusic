@@ -23,7 +23,7 @@
           class="remind-songitem"
           v-for="(item, index) in remindSearchsongs"
           :key="index"
-          @click="goSearchResult(item.name)"
+          @click="debounce()"
         >
           {{ item.name }} - {{ item.artist.name }}
         </div>
@@ -109,6 +109,7 @@
 
 <script>
 import '../assets/less/Search.less'
+import { formatDuring } from '../assets/js/formatDuring'
 export default {
   name: 'Search',
   data() {
@@ -188,6 +189,10 @@ export default {
           this.loading = false
         }
       }, 1500)
+    },
+    // 函数防抖
+    debounce() {
+      formatDuring.debounce(this.getremindSearch, 500)
     },
     // 获取搜索建议
     getremindSearch() {

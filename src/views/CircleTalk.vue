@@ -96,8 +96,8 @@ export default {
               playcount: v.data.playTime,
             })
           })
-          console.log(this.allcircleImage)
           this.allcircleImage = this.allcircleImage.concat(this.circleImage)
+          console.log('this.allcircleImage', this.allcircleImage)
           this.circleImage = this.circleImage.splice(0, -1)
           this.offset++
         })

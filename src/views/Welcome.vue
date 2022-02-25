@@ -2,16 +2,18 @@
   <div class="welcome">
     <div class="welcome-content">
       <div class="img-box">
-        <img src="../assets/image/音乐.png" alt="" class="auto-img" />
+        <img src="../assets/image/音乐.png" class="auto-img" />
       </div>
       <div class="welcome-text">
         <div class="name">大轩音乐</div>
         <div class="enname">welcome to daxuan music</div>
       </div>
       <div class="welcome-button">
+        <!-- 登录按钮 -->
         <van-button round type="info" size="large" @click="goLogin"
           >登录</van-button
         >
+        <!-- 注册按钮 -->
         <van-button round type="info" size="large" @click="goRegister"
           >注册</van-button
         >

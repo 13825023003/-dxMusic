@@ -25,7 +25,7 @@
       <div class="newmusic-contant">
         <div
           class="music-box clearfix"
-          v-for="(item, index) in newmusicData"
+          v-for="(item, index) in newMusicData"
           :key="index"
         >
           <div
@@ -109,7 +109,7 @@
     <!-- MV推荐层 -->
     <div class="MV">
       <MyTitle title="最热MV推荐">
-        <div class="title-right CD-title-right fr" @click="refeshMV">
+        <div class="title-right CD-title-right fr" @click="refreshMV">
           刷新一下
         </div>
       </MyTitle>
@@ -121,7 +121,7 @@
         <div
           class="title-right CD-title-right fr"
           v-show="finished"
-          @click="refesh"
+          @click="refresh"
         >
           刷新一下
         </div>
@@ -134,7 +134,7 @@
         offset="20"
         @load="loadData"
       >
-        <MyCD :CD="newsongsData"></MyCD>
+        <MyCD :CD="newSongData"></MyCD>
       </van-list>
     </div>
   </div>
@@ -158,11 +158,11 @@ export default {
       // 轮播层数据
       bannerData: [],
       // 推荐层数据
-      newmusicData: [],
+      newMusicData: [],
       // 截取的歌单数据
-      newsongsData: [],
+      newSongData: [],
       // 所有的歌单数据
-      allNewsongsData: [],
+      allNewSongData: [],
       currentIndex: 0,
       // 每次触底加载8条数据
       dataCount: 4,
@@ -191,9 +191,9 @@ export default {
   created() {
     this.getBannerData()
     // 获取推荐新音乐
-    this.getNewmusicData()
+    this.getNewMusicData()
     // 获取推荐新歌单
-    this.getNewsongsData()
+    this.getNewSongData()
     // 获取榜单数据
     this.getTopData()
     // 获取MV数据
@@ -242,8 +242,6 @@ export default {
         this.deletePlayList(id)
       }
       // 获取歌曲URL
-      let url = ''
-      let musicStr = ''
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -258,8 +256,8 @@ export default {
       })
         .then((result) => {
           if (result.data.code == 200) {
-            url = result.data.data[0].url
-            musicStr = `id=${id};name=${name};artist=${artists};url=${url};cover=${pic};`
+            let url = result.data.data[0].url
+            let musicStr = `id=${id};name=${name};artist=${artists};url=${url};cover=${pic};`
             // 获取歌词
             this.getLyric(id, musicStr, name)
             this.$toast.clear()
@@ -271,7 +269,6 @@ export default {
     },
     // 获取歌词
     getLyric(id, musicStr, name) {
-      let lyric = ''
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -286,11 +283,10 @@ export default {
       })
         .then((result) => {
           if (result.data.code == 200) {
-            lyric = result.data.lrc.lyric
-            musicStr += musicStr + 'lrc=' + lyric + ';'
+            let lyric = result.data.lrc.lyric
+            musicStr += `${musicStr}lrc=${lyric};`
             let musicObj = formatDuring.parseStrObjByRegExp(musicStr)
             this.unshiftPlayList(musicObj)
-            console.log(this.$store.state)
             this.$toast.clear()
           }
         })
@@ -299,7 +295,7 @@ export default {
         })
     },
     // 获取推荐新音乐
-    getNewmusicData() {
+    getNewMusicData() {
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -313,7 +309,7 @@ export default {
           if (result.data.code == 200) {
             this.$toast.clear()
             result.data.result.map((v) => {
-              this.newmusicData.push(v)
+              this.newMusicData.push(v)
             })
           }
         })
@@ -323,11 +319,7 @@ export default {
     },
     // 获取榜单数据
     getTopData() {
-      if (this.isWeek) {
-        this.topId = 19723756
-      } else {
-        this.topId = 3778678
-      }
+      this.topId = this.isWeek ? 19723756 : 3778678
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -343,11 +335,13 @@ export default {
         .then((result) => {
           if (result.data.code == 200) {
             this.$toast.clear()
-            // 获取top5数据
-            for (let i = 0; i < 5; i++) {
-              result.data.playlist.tracks[i].isShow = false
-              this.top.push(result.data.playlist.tracks[i])
-            }
+            requestAnimationFrame(() => {
+              // 获取top5数据
+              for (let i = 0; i < 5; i++) {
+                result.data.playlist.tracks[i].isShow = false
+                this.top.push(result.data.playlist.tracks[i])
+              }
+            })
           }
         })
         .catch((err) => {
@@ -376,12 +370,13 @@ export default {
       })
         .then((result) => {
           if (result.data.code == 200) {
-            this.$toast.clear()
-            // 获取top5数据
-            result.data.data.map((v) => {
-              this.MV.push(v)
+            requestAnimationFrame(() => {
+              this.$toast.clear()
+              // 获取top5数据
+              result.data.data.map((v) => {
+                this.MV.push(v)
+              })
             })
-            //
           }
         })
         .catch((err) => {
@@ -389,13 +384,13 @@ export default {
         })
     },
     // 刷新MV事件
-    refeshMV() {
+    refreshMV() {
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
         duration: 0,
       })
-      this.offset = this.offset + 4
+      this.offset = this.offset > 40 ? 0 : this.offset + 4
       this.MV = this.MV.splice(0, -1)
       this.axios({
         method: 'GET',
@@ -418,7 +413,7 @@ export default {
         })
     },
     // 获取推荐新歌单
-    getNewsongsData() {
+    getNewSongData() {
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -434,21 +429,23 @@ export default {
         .then((result) => {
           if (result.data.code == 200) {
             this.$toast.clear()
-            result.data.playlists.map((v) => {
-              this.allNewsongsData.push(v)
+            requestAnimationFrame(() => {
+              result.data.playlists.map((v) => {
+                this.allNewSongData.push(v)
+              })
+              // 获取最后一个歌单的updateTime
+              this.updateTime = this.allNewSongData[
+                this.allNewSongData.length - 1
+              ].updateTime
+              // 根据开始截取位置和截取数据数量设置购物袋显示的数据
+              this.newSongData = this.allNewSongData.slice(
+                this.startCount,
+                this.startCount + this.dataCount
+              )
+              this.startCount += this.dataCount
+              // 未加载
+              this.loading = false
             })
-            // 获取最后一个歌单的updateTime
-            this.updateTime = this.allNewsongsData[
-              this.allNewsongsData.length - 1
-            ].updateTime
-            // 根据开始截取位置和截取数据数量设置购物袋显示的数据
-            this.newsongsData = this.allNewsongsData.slice(
-              this.startCount,
-              this.startCount + this.dataCount
-            )
-            this.startCount += this.dataCount
-            // 未加载
-            this.loading = false
           }
         })
         .catch((err) => {
@@ -458,12 +455,12 @@ export default {
     // 懒加载事件
     loadData() {
       setTimeout(() => {
-        let data = this.allNewsongsData.slice(
+        let data = this.allNewSongData.slice(
           this.startCount,
           this.startCount + this.dataCount
         )
         this.startCount += this.dataCount
-        this.newsongsData.push(...data)
+        this.newSongData.push(...data)
         if (data.length < this.dataCount) {
           this.finished = true
         } else {
@@ -472,13 +469,13 @@ export default {
       }, 1500)
     },
     // 刷新歌单事件
-    refesh() {
+    refresh() {
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
         duration: 0,
       })
-      this.newsongsData = this.newsongsData.splice(0, -1)
+      this.newSongData = this.newSongData.splice(0, -1)
 
       this.axios({
         method: 'GET',
@@ -490,13 +487,15 @@ export default {
       })
         .then((result) => {
           if (result.data.code == 200) {
-            this.$toast.clear()
-            result.data.playlists.map((v) => {
-              this.newsongsData.push(v)
+            requestAnimationFrame(() => {
+              this.$toast.clear()
+              result.data.playlists.map((v) => {
+                this.newSongData.push(v)
+              })
+              this.updateTime = this.newSongData[
+                this.newSongData.length - 1
+              ].updateTime
             })
-            this.updateTime = this.newsongsData[
-              this.newsongsData.length - 1
-            ].updateTime
           }
         })
         .catch((err) => {
@@ -515,17 +514,17 @@ export default {
         })
           .then((result) => {
             if (result.status == 200) {
-              if (result.data.success) {
-                this.play(id, name, pic, artists)
-                setTimeout(() => {
+              requestAnimationFrame(() => {
+                if (result.data.success) {
+                  this.play(id, name, pic, artists)
                   this.$router.push({
                     name: 'Detail',
                     params: { id },
                   })
-                })
-              } else {
-                this.$toast(result.data.message)
-              }
+                } else {
+                  this.$toast(result.data.message)
+                }
+              })
             }
           })
           .catch((err) => {

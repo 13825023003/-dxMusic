@@ -53,28 +53,42 @@
           v-for="(item, index) in likeSong"
           :key="'info2-' + index"
         >
-          <span class="song-play">
-            <van-icon
-              name="play-circle-o"
-              color="#505050"
-              size="26"
-              @click="play(item.id, item.name, item.al.picUrl, item.ar[0].name)"
-            ></van-icon>
-          </span>
-          <div class="song-count fl">
-            {{ index + 50 * (currentPage - 1) + 1 }}
-          </div>
-          <div class="song-text fr van-hairline--bottom">
-            <div
-              class="song-name van-ellipsis"
-              @click="goDetail(item.id, item.name, item.dt)"
-            >
-              {{ item.name }}
+          <van-swipe-cell>
+            <span class="song-play">
+              <van-icon
+                name="play-circle-o"
+                color="#505050"
+                size="26"
+                @click="
+                  play(item.id, item.name, item.al.picUrl, item.ar[0].name)
+                "
+              ></van-icon>
+            </span>
+            <div class="song-count fl">
+              {{ index + 50 * (currentPage - 1) + 1 }}
             </div>
-            <div class="song-enname van-ellipsis">
-              {{ item.ar[0].name }}-{{ item.al.name }}
+            <div class="song-text fr van-hairline--bottom">
+              <div
+                class="song-name van-ellipsis"
+                @click="goDetail(item.id, item.name, item.dt)"
+              >
+                {{ item.name }}
+              </div>
+              <div class="song-enname van-ellipsis">
+                {{ item.ar[0].name }}-{{ item.al.name }}
+              </div>
             </div>
-          </div>
+
+            <template #right>
+              <van-button
+                square
+                text="删除"
+                type="danger"
+                class="delete-button"
+                @click="deleteSong(item, index)"
+              />
+            </template>
+          </van-swipe-cell>
         </div>
       </div>
     </div>
@@ -125,7 +139,7 @@ export default {
       currentPage: 1,
       // 总记录数
       totalItem: 0,
-      hasSong: false,
+      hasSong: true,
       isSub: false,
     }
   },
@@ -188,6 +202,7 @@ export default {
           if (result.data.playlist.trackCount) {
             this.hasSong = true
             let tracks = result.data.playlist.tracks
+            console.log(tracks)
             this.totalItem = tracks.length
             for (
               let i = (this.currentPage - 1) * 50;
@@ -312,6 +327,33 @@ export default {
     },
     goRecommend() {
       this.$router.push({ name: 'Recommend' })
+    },
+    deleteSong(item, index) {
+      item.id = Number(item.id)
+      this.$dialog
+        .confirm({
+          title: '提示内容',
+          message: '是否删除当前选中的歌曲',
+        })
+        .then(() => {
+          this.axios({
+            url: '/playlist/tracks',
+            params: {
+              op: 'del',
+              pid: this.likeCDId,
+              tracks: item.id,
+            },
+          })
+            .then((result) => {
+              console.log(result)
+              this.likeSong.splice(index, 1)
+              this.$toast('删除歌曲成功')
+            })
+            .catch((err) => {})
+        })
+        .catch(() => {
+          // on cancel
+        })
     },
   },
 }

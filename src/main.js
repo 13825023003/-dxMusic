@@ -13,7 +13,17 @@ import SlideVerify from 'vue-monoplasty-slide-verify'
 import VideoPlayer from 'vue-video-player'
 import 'vue-video-player/src/custom-theme.css'
 import waterfall from 'vue-waterfall2'
+import * as echarts from 'echarts/core'
+import {
+  DatasetComponent,
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+} from 'echarts/components'
+import { LineChart } from 'echarts/charts'
+import { CanvasRenderer } from 'echarts/renderers'
 import 'video.js/dist/video-js.css'
+
 // 导入rem适配文件
 import 'lib-flexible/flexible'
 
@@ -108,6 +118,15 @@ Vue.use(Button)
   .use(Calendar)
   .use(Pagination)
   .use(Image)
+
+Vue.use([
+  DatasetComponent,
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+  LineChart,
+  CanvasRenderer,
+])
 
 Vue.config.productionTip = false
 // 配置请求基本路径

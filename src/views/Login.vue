@@ -171,7 +171,6 @@ export default {
         .then((result) => {
           this.msg = `登录成功, 耗时${(times / 1000).toFixed(1)}s`
           this.$toast(this.msg)
-
           if (result.data.code == 200) {
             // 保存cookies, 以便后面验证登录
             localStorage.setItem('_phone', result.config.params.phone)
